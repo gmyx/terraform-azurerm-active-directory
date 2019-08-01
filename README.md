@@ -74,6 +74,7 @@ TO BE DOCUMENTED
 
 ## History
 
-| Date     | Release    | Change      |
-| -------- | ---------- | ----------- |
-| 20190731 | 20190731.1 | 1st release |
+| Date     | Release    | Change                         |
+| -------- | ---------- | ------------------------------ |
+| 20190801 | 20190801.1 | Remove unnecessary script step |
+| 20190731 | 20190731.1 | 1st release                    |

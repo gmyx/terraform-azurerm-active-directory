@@ -98,25 +98,6 @@ resource azurerm_virtual_machine dc1 {
   tags = "${var.tags}"
 }
 
-resource "azurerm_virtual_machine_extension" "CustomScriptExtension-dc1" {
-
-  name                 = "CustomScriptExtension-dc1"
-  location             = "${var.location}"
-  resource_group_name  = "${var.resourceGroupName}"
-  virtual_machine_name = "${azurerm_virtual_machine.dc1.name}"
-  publisher            = "Microsoft.Compute"
-  type                 = "CustomScriptExtension"
-  type_handler_version = "1.9"
-
-  settings = <<SETTINGS
-        {   
-        "commandToExecute": "powershell.exe -ExecutionPolicy Unrestricted -encodedcommand cwBlAHQALQBlAHgAZQBjAHUAdABpAG8AbgBwAG8AbABpAGMAeQAgAHUAbgByAGUAcwB0AHIAaQBjAHQAZQBkAA=="
-        }
-SETTINGS
-
-  tags = "${var.tags}"
-}
-
 resource azurerm_network_security_group NSG-dc2 {
   name = "${var.ad_prefix}2-NSG"
   location = "${var.location}"
@@ -205,25 +186,6 @@ resource azurerm_virtual_machine dc2 {
   tags = "${var.tags}"
 }
 
-resource "azurerm_virtual_machine_extension" "CustomScriptExtension-dc2" {
-
-  name = "CustomScriptExtension-dc2"
-  location = "${var.location}"
-  resource_group_name = "${var.resourceGroupName}"
-  virtual_machine_name = "${azurerm_virtual_machine.dc2.name}"
-  publisher = "Microsoft.Compute"
-  type = "CustomScriptExtension"
-  type_handler_version = "1.9"
-
-  settings = <<SETTINGS
-        {   
-        "commandToExecute": "powershell.exe -ExecutionPolicy Unrestricted -encodedcommand cwBlAHQALQBlAHgAZQBjAHUAdABpAG8AbgBwAG8AbABpAGMAeQAgAHUAbgByAGUAcwB0AHIAaQBjAHQAZQBkAA=="
-        }
-SETTINGS
-
-  tags = "${var.tags}"
-}
-
 resource "azurerm_virtual_machine_extension" "createMgmtADForest" {
     name                 = "createMgmtADForest"
     location             = "${var.location}"
@@ -259,8 +221,6 @@ resource "azurerm_virtual_machine_extension" "createMgmtADForest" {
             }
         }
     PROTECTED_SETTINGS
-
-  depends_on = ["azurerm_virtual_machine_extension.CustomScriptExtension-dc1"]
 }
 
 resource "azurerm_virtual_machine_extension" "addMgmtADSecondaryDC" {
