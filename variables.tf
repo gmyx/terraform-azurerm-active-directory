@@ -32,7 +32,9 @@ variable "reverse_Zone_Object" {
 variable "ad_prefix" {
   default = "adds"
 }
-
+variable "dnsServers" {
+  default = ""
+}
 variable "subnetName" {
   default = "PwS3-Shared-PAZ-Openshift-RG"
 }

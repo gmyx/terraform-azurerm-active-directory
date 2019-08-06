@@ -53,6 +53,7 @@ module "addsvms" {
   vnetResourceGroupName = "${var.envprefix}-Core-NetMGMT-RG"
   rootDC1IPAddress      = "100.96.122.4"
   rootDC2IPAddress      = "100.96.122.5"
+  dnsServers            = ["168.63.129.16"]
   vm_size               = "Standard_D2_v3"
   
   keyVaultName              = "someKeyVaultName"
@@ -74,7 +75,8 @@ TO BE DOCUMENTED
 
 ## History
 
-| Date     | Release    | Change                         |
-| -------- | ---------- | ------------------------------ |
-| 20190801 | 20190801.1 | Remove unnecessary script step |
-| 20190731 | 20190731.1 | 1st release                    |
+| Date     | Release    | Change                                     |
+| -------- | ---------- | ------------------------------------------ |
+| 20190806 | 20190806.1 | Add support for custom DNS Server Override |
+| 20190801 | 20190801.1 | Remove unnecessary script step             |
+| 20190731 | 20190731.1 | 1st release                                |

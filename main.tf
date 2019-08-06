@@ -49,6 +49,7 @@ resource azurerm_network_interface NIC-dc1 {
   enable_ip_forwarding          = "${var.nic_enable_ip_forwarding}"
   enable_accelerated_networking = "${var.nic_enable_accelerated_networking}"
   network_security_group_id     = "${azurerm_network_security_group.NSG-dc1.id}"
+  dns_servers                   = "${var.dnsServers}"
   ip_configuration {
     name                          = "ipconfig1"
     subnet_id                     = "${data.azurerm_subnet.subnet.id}"
@@ -99,103 +100,104 @@ resource azurerm_virtual_machine dc1 {
 }
 
 resource azurerm_network_security_group NSG-dc2 {
-  name = "${var.ad_prefix}2-NSG"
-  location = "${var.location}"
+  name                = "${var.ad_prefix}2-NSG"
+  location            = "${var.location}"
   resource_group_name = "${var.resourceGroupName}"
   security_rule {
-    name = "AllowAllInbound"
-    description = "Allow all in"
-    access = "Allow"
-    priority = "100"
-    protocol = "*"
-    direction = "Inbound"
-    source_port_range = "*"
-    source_address_prefix = "*"
-    destination_port_range = "*"
+    name                       = "AllowAllInbound"
+    description                = "Allow all in"
+    access                     = "Allow"
+    priority                   = "100"
+    protocol                   = "*"
+    direction                  = "Inbound"
+    source_port_range          = "*"
+    source_address_prefix      = "*"
+    destination_port_range     = "*"
     destination_address_prefix = "*"
   }
   security_rule {
-    name = "AllowAllOutbound"
-    description = "Allow all out"
-    access = "Allow"
-    priority = "105"
-    protocol = "*"
-    direction = "Outbound"
-    source_port_range = "*"
-    source_address_prefix = "*"
-    destination_port_range = "*"
+    name                       = "AllowAllOutbound"
+    description                = "Allow all out"
+    access                     = "Allow"
+    priority                   = "105"
+    protocol                   = "*"
+    direction                  = "Outbound"
+    source_port_range          = "*"
+    source_address_prefix      = "*"
+    destination_port_range     = "*"
     destination_address_prefix = "*"
   }
   tags = "${var.tags}"
 }
 
 resource azurerm_network_interface NIC-dc2 {
-  name = "${var.ad_prefix}2-Nic1"
-  location = "${var.location}"
-  resource_group_name = "${var.resourceGroupName}"
-  enable_ip_forwarding = "${var.nic_enable_ip_forwarding}"
+  name                          = "${var.ad_prefix}2-Nic1"
+  location                      = "${var.location}"
+  resource_group_name           = "${var.resourceGroupName}"
+  enable_ip_forwarding          = "${var.nic_enable_ip_forwarding}"
   enable_accelerated_networking = "${var.nic_enable_accelerated_networking}"
-  network_security_group_id = "${azurerm_network_security_group.NSG-dc2.id}"
+  network_security_group_id     = "${azurerm_network_security_group.NSG-dc2.id}"
+  dns_servers                   = "${var.dnsServers}"
   ip_configuration {
-    name = "ipconfig1"
-    subnet_id = "${data.azurerm_subnet.subnet.id}"
-    private_ip_address = "${var.rootDC2IPAddress}"
+    name                          = "ipconfig1"
+    subnet_id                     = "${data.azurerm_subnet.subnet.id}"
+    private_ip_address            = "${var.rootDC2IPAddress}"
     private_ip_address_allocation = "${var.rootDC2IPAddress_allocation}"
-    primary = true
+    primary                       = true
   }
 }
 
 resource azurerm_virtual_machine dc2 {
-  name = "${var.ad_prefix}2"
-  location = "${var.location}"
-  resource_group_name = "${var.resourceGroupName}"
-  availability_set_id = "${azurerm_availability_set.availabilityset.id}"
-  vm_size = "${var.vm_size}"
-  network_interface_ids = ["${azurerm_network_interface.NIC-dc2.id}"]
+  name                         = "${var.ad_prefix}2"
+  location                     = "${var.location}"
+  resource_group_name          = "${var.resourceGroupName}"
+  availability_set_id          = "${azurerm_availability_set.availabilityset.id}"
+  vm_size                      = "${var.vm_size}"
+  network_interface_ids        = ["${azurerm_network_interface.NIC-dc2.id}"]
   primary_network_interface_id = "${azurerm_network_interface.NIC-dc2.id}"
 
   delete_data_disks_on_termination = "true"
-  delete_os_disk_on_termination = "true"
+  delete_os_disk_on_termination    = "true"
   os_profile {
-    computer_name = "${var.ad_prefix}2"
+    computer_name  = "${var.ad_prefix}2"
     admin_username = "${var.admin_username}"
     admin_password = "${data.azurerm_key_vault_secret.secretPassword.value}"
   }
   storage_image_reference {
     publisher = "${var.storage_image_reference.publisher}"
-    offer = "${var.storage_image_reference.offer}"
-    sku = "${var.storage_image_reference.sku}"
-    version = "${var.storage_image_reference.version}"
+    offer     = "${var.storage_image_reference.offer}"
+    sku       = "${var.storage_image_reference.sku}"
+    version   = "${var.storage_image_reference.version}"
   }
   os_profile_windows_config {
     provision_vm_agent = true
   }
   storage_os_disk {
-    name = "${var.ad_prefix}2-OsDisk_1"
-    caching = "${var.storage_os_disk.caching}"
+    name          = "${var.ad_prefix}2-OsDisk_1"
+    caching       = "${var.storage_os_disk.caching}"
     create_option = "${var.storage_os_disk.create_option}"
-    os_type = "${var.storage_os_disk.os_type}"
+    os_type       = "${var.storage_os_disk.os_type}"
   }
   storage_data_disk {
-    name = "${var.ad_prefix}2-DataDisk_1"
-    lun = 0
-    caching = "None"
+    name          = "${var.ad_prefix}2-DataDisk_1"
+    lun           = 0
+    caching       = "None"
     create_option = "Empty"
-    disk_size_gb = "10"
+    disk_size_gb  = "10"
   }
   tags = "${var.tags}"
 }
 
 resource "azurerm_virtual_machine_extension" "createMgmtADForest" {
-    name                 = "createMgmtADForest"
-    location             = "${var.location}"
-    resource_group_name  = "${var.resourceGroupName}"
-    virtual_machine_name = "${azurerm_virtual_machine.dc1.name}"
-    publisher            = "Microsoft.Powershell"
-    type                 = "DSC"
-    type_handler_version = "2.77"
+  name                 = "createMgmtADForest"
+  location             = "${var.location}"
+  resource_group_name  = "${var.resourceGroupName}"
+  virtual_machine_name = "${azurerm_virtual_machine.dc1.name}"
+  publisher            = "Microsoft.Powershell"
+  type                 = "DSC"
+  type_handler_version = "2.77"
 
-    settings = <<SETTINGS
+  settings = <<SETTINGS
             {
                 "WmfVersion": "latest",
                 "configuration": {
@@ -211,7 +213,7 @@ resource "azurerm_virtual_machine_extension" "createMgmtADForest" {
                 }
             }
             SETTINGS
-    protected_settings = <<PROTECTED_SETTINGS
+  protected_settings = <<PROTECTED_SETTINGS
         {
             "configurationArguments": {
                 "adminCreds": {
