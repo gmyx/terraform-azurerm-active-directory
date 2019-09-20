@@ -73,6 +73,7 @@ resource azurerm_virtual_machine dc1 {
     computer_name  = "${var.ad_prefix}1"
     admin_username = "${var.admin_username}"
     admin_password = "${data.azurerm_key_vault_secret.secretPassword.value}"
+    custom_data    = "${var.custom_data}"
   }
   storage_image_reference {
     publisher = "${var.storage_image_reference.publisher}"
@@ -162,6 +163,7 @@ resource azurerm_virtual_machine dc2 {
     computer_name  = "${var.ad_prefix}2"
     admin_username = "${var.admin_username}"
     admin_password = "${data.azurerm_key_vault_secret.secretPassword.value}"
+    custom_data    = "${var.custom_data}"
   }
   storage_image_reference {
     publisher = "${var.storage_image_reference.publisher}"

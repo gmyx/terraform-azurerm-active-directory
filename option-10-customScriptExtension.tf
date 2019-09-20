@@ -1,7 +1,7 @@
 /*
 Example:
 
-custom_data = ${file("serverconfig/jumpbox-init.ps1"
+custom_data = ${file("serverconfig/jumpbox-init.ps1")}
 
 */
 
@@ -28,4 +28,5 @@ resource "azurerm_virtual_machine_extension" "CustomScriptExtension" {
 SETTINGS
 
   tags = "${var.tags}"
+  depends_on = [azurerm_virtual_machine_extension.createMgmtADForest]
 }
